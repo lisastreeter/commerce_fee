@@ -100,7 +100,7 @@ class FeeOrderProcessorTest extends CommerceKernelTestBase {
       'policy' => [
         'target_plugin_id' => 'order_percentage',
         'target_plugin_configuration' => [
-          'amount' => '0.10',
+          'percentage' => '0.10',
         ],
       ],
       'conditions' => [

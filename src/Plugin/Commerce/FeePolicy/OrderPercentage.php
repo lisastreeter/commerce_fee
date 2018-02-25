@@ -30,7 +30,7 @@ class OrderPercentage extends PercentageBase {
     $order->addAdjustment(new Adjustment([
       'type' => 'fee',
       // @todo Change to label from UI when added in #2770731.
-      'label' => t('Discount'),
+      'label' => t('Fee'),
       'amount' => $adjustment_amount,
       'percentage' => $this->getPercentage(),
       'source_id' => $fee->id(),
