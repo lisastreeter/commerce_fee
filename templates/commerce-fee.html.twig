@@ -1,0 +1,24 @@
+{#
+/**
+ * @file
+ *
+ * Default template for fees.
+ *
+ * Available variables:
+ * - attributes: HTML attributes for the wrapper.
+ * - fee: The rendered fee fields.
+ *   Use 'fee' to print them all, or print a subset such as
+ *   'fee.name'. Use the following code to exclude the
+ *   printing of a given field:
+ *   @code
+ *   {{ fee|without('name') }}
+ *   @endcode
+ * - fee_entity: The fee entity.
+ * - fee_url: The fee URL.
+ *
+ * @ingroup themeable
+ */
+#}
+<article{{ attributes }}>
+  {{ fee }}
+</article>

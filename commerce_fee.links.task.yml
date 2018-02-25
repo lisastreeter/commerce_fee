@@ -1,0 +1,9 @@
+entity.commerce_fee.collection:
+  route_name: entity.commerce_fee.collection
+  base_route: entity.commerce_fee.collection
+  title: List
+
+entity.commerce_fee.edit_form:
+  route_name: entity.commerce_fee.edit_form
+  base_route: entity.commerce_fee.edit_form
+  title: Edit

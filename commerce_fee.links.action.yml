@@ -1,0 +1,5 @@
+entity.commerce_fee.add_form:
+  route_name: entity.commerce_fee.add_form
+  title: 'Add fee'
+  appears_on:
+    - entity.commerce_fee.collection

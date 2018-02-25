@@ -1,0 +1,5 @@
+commerce_fee.fee_policy:
+  label: Commerce fee policy
+  provider: commerce_fee
+  plugin_manager_service_id: plugin.manager.commerce_fee_policy
+  plugin_definition_decorator_class: Drupal\plugin\PluginDefinition\ArrayPluginDefinitionDecorator

@@ -1,0 +1,22 @@
+{#
+/**
+ * @file
+ * Template for the fee add/edit form.
+ *
+ * Available variables:
+ * - form: The form.
+ *
+ * @ingroup themeable
+ */
+#}
+<div class="layout-fee-form clearfix">
+  <div class="layout-region layout-region-fee-main">
+    {{ form|without('advanced', 'actions') }}
+  </div>
+  <div class="layout-region layout-region-fee-secondary">
+    {{ form.advanced }}
+  </div>
+  <div class="layout-region layout-region-fee-footer">
+    {{ form.actions }}
+  </div>
+</div>

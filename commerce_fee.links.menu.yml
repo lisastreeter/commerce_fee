@@ -1,0 +1,5 @@
+entity.commerce_fee.collection:
+  title: 'Fees'
+  route_name: 'entity.commerce_fee.collection'
+  parent: 'commerce.admin_commerce'
+  description: 'Manage your fees.'
