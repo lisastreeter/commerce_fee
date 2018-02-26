@@ -47,15 +47,15 @@ class FeeTest extends CommerceBrowserTestBase {
     $this->assertSession()->fieldExists('name[0][value]');
     $name = $this->randomMachineName(8);
     $this->getSession()->getPage()->fillField('name[0][value]', $name);
-    $this->getSession()->getPage()->selectFieldOption('policy[0][target_plugin_id]', 'order_item_percentage');
+    $this->getSession()->getPage()->selectFieldOption('plugin[0][target_plugin_id]', 'order_item_percentage');
     $this->waitForAjaxToFinish();
-    $this->getSession()->getPage()->fillField('policy[0][target_plugin_configuration][order_item_percentage][percentage]', '10.0');
+    $this->getSession()->getPage()->fillField('plugin[0][target_plugin_configuration][order_item_percentage][percentage]', '10.0');
 
     // Change, assert any values reset.
-    $this->getSession()->getPage()->selectFieldOption('policy[0][target_plugin_id]', 'order_percentage');
+    $this->getSession()->getPage()->selectFieldOption('plugin[0][target_plugin_id]', 'order_percentage');
     $this->waitForAjaxToFinish();
-    $this->assertSession()->fieldValueNotEquals('policy[0][target_plugin_configuration][order_percentage][percentage]', '10.0');
-    $this->getSession()->getPage()->fillField('policy[0][target_plugin_configuration][order_percentage][percentage]', '10.0');
+    $this->assertSession()->fieldValueNotEquals('plugin[0][target_plugin_configuration][order_percentage][percentage]', '10.0');
+    $this->getSession()->getPage()->fillField('plugin[0][target_plugin_configuration][order_percentage][percentage]', '10.0');
 
     // Confirm the integrity of the conditions UI.
     foreach (['order', 'product', 'customer'] as $condition_group) {
@@ -75,9 +75,9 @@ class FeeTest extends CommerceBrowserTestBase {
     $this->assertEquals(count($fee_count), 1, 'fees exists in the table.');
 
     $fee = Fee::load(1);
-    /** @var \Drupal\commerce\Plugin\Field\FieldType\PluginItem $policy_field */
-    $policy_field = $fee->get('policy')->first();
-    $this->assertEquals('0.10', $policy_field->target_plugin_configuration['percentage']);
+    /** @var \Drupal\commerce\Plugin\Field\FieldType\PluginItem $plugin_field */
+    $plugin_field = $fee->get('plugin')->first();
+    $this->assertEquals('0.10', $plugin_field->target_plugin_configuration['percentage']);
 
     /** @var \Drupal\commerce\Plugin\Field\FieldType\PluginItem $condition_field */
     $condition_field = $fee->get('conditions')->first();
@@ -95,13 +95,13 @@ class FeeTest extends CommerceBrowserTestBase {
     // Check the integrity of the form.
     $this->assertSession()->fieldExists('name[0][value]');
 
-    $this->getSession()->getPage()->fillField('policy[0][target_plugin_id]', 'order_percentage');
+    $this->getSession()->getPage()->fillField('plugin[0][target_plugin_id]', 'order_percentage');
     $this->waitForAjaxToFinish();
 
     $name = $this->randomMachineName(8);
     $edit = [
       'name[0][value]' => $name,
-      'policy[0][target_plugin_configuration][order_percentage][percentage]' => '10.0',
+      'plugin[0][target_plugin_configuration][order_percentage][percentage]' => '10.0',
     ];
 
     // Set an end date.
@@ -113,9 +113,9 @@ class FeeTest extends CommerceBrowserTestBase {
     $fee_count = $this->getSession()->getPage()->find('xpath', '//table/tbody/tr/td[text()="' . $name . '"]');
     $this->assertEquals(count($fee_count), 1, 'fees exists in the table.');
 
-    /** @var \Drupal\commerce\Plugin\Field\FieldType\PluginItem $policy_field */
-    $policy_field = Fee::load(1)->get('policy')->first();
-    $this->assertEquals('0.10', $policy_field->target_plugin_configuration['percentage']);
+    /** @var \Drupal\commerce\Plugin\Field\FieldType\PluginItem $plugin_field */
+    $plugin_field = Fee::load(1)->get('plugin')->first();
+    $this->assertEquals('0.10', $plugin_field->target_plugin_configuration['percentage']);
   }
 
   /**
@@ -125,7 +125,7 @@ class FeeTest extends CommerceBrowserTestBase {
     $fee = $this->createEntity('commerce_fee', [
       'name' => $this->randomMachineName(8),
       'status' => TRUE,
-      'policy' => [
+      'plugin' => [
         'target_plugin_id' => 'order_item_percentage',
         'target_plugin_configuration' => [
           'percentage' => '0.10',
@@ -144,9 +144,9 @@ class FeeTest extends CommerceBrowserTestBase {
       ],
     ]);
 
-    /** @var \Drupal\commerce\Plugin\Field\FieldType\PluginItem $policy_field */
-    $policy_field = $fee->get('policy')->first();
-    $this->assertEquals('0.10', $policy_field->target_plugin_configuration['percentage']);
+    /** @var \Drupal\commerce\Plugin\Field\FieldType\PluginItem $plugin_field */
+    $plugin_field = $fee->get('plugin')->first();
+    $this->assertEquals('0.10', $plugin_field->target_plugin_configuration['percentage']);
 
     $this->drupalGet($fee->toUrl('edit-form'));
     $this->assertSession()->pageTextContains('Restricted');
@@ -156,7 +156,7 @@ class FeeTest extends CommerceBrowserTestBase {
     $new_fee_name = $this->randomMachineName(8);
     $edit = [
       'name[0][value]' => $new_fee_name,
-      'policy[0][target_plugin_configuration][order_item_percentage][percentage]' => '20',
+      'plugin[0][target_plugin_configuration][order_item_percentage][percentage]' => '20',
     ];
     $this->submitForm($edit, 'Save');
 
@@ -164,9 +164,9 @@ class FeeTest extends CommerceBrowserTestBase {
     $fee_changed = Fee::load($fee->id());
     $this->assertEquals($new_fee_name, $fee_changed->getName(), 'The fee name successfully updated.');
 
-    /** @var \Drupal\commerce\Plugin\Field\FieldType\PluginItem $policy_field */
-    $policy_field = $fee_changed->get('policy')->first();
-    $this->assertEquals('0.20', $policy_field->target_plugin_configuration['percentage']);
+    /** @var \Drupal\commerce\Plugin\Field\FieldType\PluginItem $plugin_field */
+    $plugin_field = $fee_changed->get('plugin')->first();
+    $this->assertEquals('0.20', $plugin_field->target_plugin_configuration['percentage']);
   }
 
   /**

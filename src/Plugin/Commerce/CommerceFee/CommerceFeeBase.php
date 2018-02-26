@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\commerce_fee\Plugin\Commerce\FeePolicy;
+namespace Drupal\commerce_fee\Plugin\Commerce\CommerceFee;
 
 use Drupal\commerce_price\RounderInterface;
 use Drupal\Component\Utility\NestedArray;
@@ -13,7 +13,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Provides the base class for fee policies.
  */
-abstract class FeePolicyBase extends PluginBase implements FeePolicyInterface, ContainerFactoryPluginInterface {
+abstract class CommerceFeeBase extends PluginBase implements CommerceFeeInterface, ContainerFactoryPluginInterface {
 
   /**
    * The rounder.
@@ -23,7 +23,7 @@ abstract class FeePolicyBase extends PluginBase implements FeePolicyInterface, C
   protected $rounder;
 
   /**
-   * Constructs a new FeePolicyBase object.
+   * Constructs a new CommerceFeeBase object.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
@@ -116,9 +116,9 @@ abstract class FeePolicyBase extends PluginBase implements FeePolicyInterface, C
    */
   protected function assertEntity(EntityInterface $entity) {
     $entity_type_id = $entity->getEntityTypeId();
-    $policy_entity_type_id = $this->getEntityTypeId();
-    if ($entity_type_id != $policy_entity_type_id) {
-      throw new \InvalidArgumentException(sprintf('The policy requires a "%s" entity, but a "%s" entity was given.', $policy_entity_type_id, $entity_type_id));
+    $plugin_entity_type_id = $this->getEntityTypeId();
+    if ($entity_type_id != $plugin_entity_type_id) {
+      throw new \InvalidArgumentException(sprintf('The plugin requires a "%s" entity, but a "%s" entity was given.', $plugin_entity_type_id, $entity_type_id));
     }
   }
 

@@ -6,7 +6,7 @@ use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_store\Entity\EntityStoresInterface;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\ContentEntityInterface;
-use Drupal\commerce_fee\Plugin\Commerce\FeePolicy\FeePolicyInterface;
+use Drupal\commerce_fee\Plugin\Commerce\CommerceFee\CommerceFeeInterface;
 
 /**
  * Defines the interface for fees.
@@ -86,22 +86,22 @@ interface FeeInterface extends ContentEntityInterface, EntityStoresInterface {
   public function setOrderTypeIds(array $order_type_ids);
 
   /**
-   * Gets the policy.
+   * Gets the plugin.
    *
-   * @return \Drupal\commerce_fee\Plugin\Commerce\FeePolicy\FeePolicyInterface|null
-   *   The policy, or NULL if not yet available.
+   * @return \Drupal\commerce_fee\Plugin\Commerce\CommerceFee\CommerceFeeInterface|null
+   *   The plugin, or NULL if not yet available.
    */
-  public function getPolicy();
+  public function getPlugin();
 
   /**
-   * Sets the policy.
+   * Sets the plugin.
    *
-   * @param \Drupal\commerce_fee\Plugin\Commerce\FeePolicy\FeePolicyInterface $policy
-   *   The policy.
+   * @param \Drupal\commerce_fee\Plugin\Commerce\CommerceFee\CommerceFeeInterface $plugin
+   *   The plugin.
    *
    * @return $this
    */
-  public function setPolicy(FeePolicyInterface $policy);
+  public function setPlugin(CommerceFeeInterface $plugin);
 
   /**
    * Gets the conditions.

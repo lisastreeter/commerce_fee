@@ -12,18 +12,18 @@ use Drupal\commerce_fee\Entity\Fee;
 use Drupal\Tests\commerce\Kernel\CommerceKernelTestBase;
 
 /**
- * Tests fee policies.
+ * Tests commerce fees.
  *
  * @group commerce
  */
-class FeePolicyTest extends CommerceKernelTestBase {
+class CommerceFeeTest extends CommerceKernelTestBase {
 
   /**
-   * The policy manager.
+   * The commerce fee manager.
    *
-   * @var \Drupal\commerce_fee\FeePolicyManager
+   * @var \Drupal\commerce_fee\CommerceFeeManager
    */
-  protected $policyManager;
+  protected $commerceFeeManager;
 
   /**
    * The test order.
@@ -65,7 +65,7 @@ class FeePolicyTest extends CommerceKernelTestBase {
       'commerce_product',
       'commerce_fee',
     ]);
-    $this->policyManager = $this->container->get('plugin.manager.commerce_fee_policy');
+    $this->commerceFeeManager = $this->container->get('plugin.manager.commerce_fee');
 
     OrderItemType::create([
       'id' => 'test',
@@ -107,7 +107,7 @@ class FeePolicyTest extends CommerceKernelTestBase {
       'order_types' => [$this->order->bundle()],
       'stores' => [$this->store->id()],
       'status' => TRUE,
-      'policy' => [
+      'plugin' => [
         'target_plugin_id' => 'order_percentage',
         'target_plugin_configuration' => [
           'percentage' => '0.10',
@@ -116,9 +116,9 @@ class FeePolicyTest extends CommerceKernelTestBase {
     ]);
     $fee->save();
 
-    /** @var \Drupal\commerce\Plugin\Field\FieldType\PluginItem $policy_field */
-    $policy_field = $fee->get('policy')->first();
-    $this->assertEquals('0.10', $policy_field->target_plugin_configuration['percentage']);
+    /** @var \Drupal\commerce\Plugin\Field\FieldType\PluginItem $plugin_field */
+    $plugin_field = $fee->get('plugin')->first();
+    $this->assertEquals('0.10', $plugin_field->target_plugin_configuration['percentage']);
 
     $fee->apply($this->order);
     $this->assertEquals(1, count($this->order->getAdjustments()));
@@ -136,7 +136,7 @@ class FeePolicyTest extends CommerceKernelTestBase {
       'order_types' => [$this->order->bundle()],
       'stores' => [$this->store->id()],
       'status' => TRUE,
-      'policy' => [
+      'plugin' => [
         'target_plugin_id' => 'order_fixed_amount',
         'target_plugin_configuration' => [
           'amount' => [
@@ -207,7 +207,7 @@ class FeePolicyTest extends CommerceKernelTestBase {
       'order_types' => [$this->order->bundle()],
       'stores' => [$this->store->id()],
       'status' => TRUE,
-      'policy' => [
+      'plugin' => [
         'target_plugin_id' => 'order_item_percentage',
         'target_plugin_configuration' => [
           'percentage' => '0.50',
@@ -216,9 +216,9 @@ class FeePolicyTest extends CommerceKernelTestBase {
     ]);
     $fee->save();
 
-    /** @var \Drupal\commerce\Plugin\Field\FieldType\PluginItem $policy_field */
-    $policy_field = $fee->get('policy')->first();
-    $this->assertEquals('0.50', $policy_field->target_plugin_configuration['percentage']);
+    /** @var \Drupal\commerce\Plugin\Field\FieldType\PluginItem $plugin_field */
+    $plugin_field = $fee->get('plugin')->first();
+    $this->assertEquals('0.50', $plugin_field->target_plugin_configuration['percentage']);
 
     $this->container->get('commerce_order.order_refresh')->refresh($this->order);
     $this->order = $this->reloadEntity($this->order);
@@ -274,7 +274,7 @@ class FeePolicyTest extends CommerceKernelTestBase {
       'order_types' => [$this->order->bundle()],
       'stores' => [$this->store->id()],
       'status' => TRUE,
-      'policy' => [
+      'plugin' => [
         'target_plugin_id' => 'order_item_fixed_amount',
         'target_plugin_configuration' => [
           'amount' => [
@@ -286,9 +286,9 @@ class FeePolicyTest extends CommerceKernelTestBase {
     ]);
     $fee->save();
 
-    /** @var \Drupal\commerce\Plugin\Field\FieldType\PluginItem $policy_field */
-    $policy_field = $fee->get('policy')->first();
-    $this->assertEquals('15.00', $policy_field->target_plugin_configuration['amount']['number']);
+    /** @var \Drupal\commerce\Plugin\Field\FieldType\PluginItem $plugin_field */
+    $plugin_field = $fee->get('plugin')->first();
+    $this->assertEquals('15.00', $plugin_field->target_plugin_configuration['amount']['number']);
 
     $this->container->get('commerce_order.order_refresh')->refresh($this->order);
     $this->order = $this->reloadEntity($this->order);

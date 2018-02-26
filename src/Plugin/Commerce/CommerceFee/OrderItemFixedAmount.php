@@ -1,15 +1,15 @@
 <?php
 
-namespace Drupal\commerce_fee\Plugin\Commerce\FeePolicy;
+namespace Drupal\commerce_fee\Plugin\Commerce\CommerceFee;
 
 use Drupal\commerce_order\Adjustment;
 use Drupal\commerce_fee\Entity\FeeInterface;
 use Drupal\Core\Entity\EntityInterface;
 
 /**
- * Provides the fixed amount policy for order items.
+ * Provides the fixed amount fee for order items.
  *
- * @CommerceFeePolicy(
+ * @CommerceFee(
  *   id = "order_item_fixed_amount",
  *   label = @Translation("Fixed amount added for each matching product"),
  *   entity_type = "commerce_order_item",

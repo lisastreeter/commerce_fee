@@ -9,12 +9,12 @@ use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 
 /**
- * Manages discovery and instantiation of fee policy plugins.
+ * Manages discovery and instantiation of commerce fee plugins.
  *
- * @see \Drupal\commerce_fee\Annotation\CommerceFeePolicy
+ * @see \Drupal\commerce_fee\Annotation\CommerceFee
  * @see plugin_api
  */
-class FeePolicyManager extends DefaultPluginManager {
+class CommerceFeeManager extends DefaultPluginManager {
 
   /**
    * The entity type manager.
@@ -24,7 +24,7 @@ class FeePolicyManager extends DefaultPluginManager {
   protected $entityTypeManager;
 
   /**
-   * Constructs a new FeePolicyManager object.
+   * Constructs a new CommerceFeeManager object.
    *
    * @param \Traversable $namespaces
    *   An object that implements \Traversable which contains the root paths
@@ -37,10 +37,10 @@ class FeePolicyManager extends DefaultPluginManager {
    *   The entity type manager.
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler, EntityTypeManagerInterface $entity_type_manager) {
-    parent::__construct('Plugin/Commerce/FeePolicy', $namespaces, $module_handler, 'Drupal\commerce_fee\Plugin\Commerce\FeePolicy\FeePolicyInterface', 'Drupal\commerce_fee\Annotation\CommerceFeePolicy');
+    parent::__construct('Plugin/Commerce/CommerceFee', $namespaces, $module_handler, 'Drupal\commerce_fee\Plugin\Commerce\CommerceFee\CommerceFeeInterface', 'Drupal\commerce_fee\Annotation\CommerceFee');
 
-    $this->alterInfo('commerce_fee_policy_info');
-    $this->setCacheBackend($cache_backend, 'commerce_fee_policy_plugins');
+    $this->alterInfo('commerce_fee_info');
+    $this->setCacheBackend($cache_backend, 'commerce_fees');
     $this->entityTypeManager = $entity_type_manager;
   }
 
@@ -58,7 +58,7 @@ class FeePolicyManager extends DefaultPluginManager {
 
     $entity_type_id = $definition['entity_type'];
     if (!$this->entityTypeManager->getDefinition($entity_type_id)) {
-      throw new PluginException(sprintf('The fee policy "%s" must specify a valid entity type, "%s" given.', $plugin_id, $entity_type_id));
+      throw new PluginException(sprintf('The fee "%s" must specify a valid entity type, "%s" given.', $plugin_id, $entity_type_id));
     }
   }
 

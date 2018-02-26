@@ -1,15 +1,15 @@
 <?php
 
-namespace Drupal\commerce_fee\Plugin\Commerce\FeePolicy;
+namespace Drupal\commerce_fee\Plugin\Commerce\CommerceFee;
 
 use Drupal\commerce_order\Adjustment;
 use Drupal\commerce_fee\Entity\FeeInterface;
 use Drupal\Core\Entity\EntityInterface;
 
 /**
- * Provides the percentage policy for order items.
+ * Provides the percentage fee for order items.
  *
- * @CommerceFeePolicy(
+ * @CommerceFee(
  *   id = "order_item_percentage",
  *   label = @Translation("Percentage of each matching product added to the order total"),
  *   entity_type = "commerce_order_item",

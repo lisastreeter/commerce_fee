@@ -97,7 +97,7 @@ class FeeOrderProcessorTest extends CommerceKernelTestBase {
       'order_types' => [$this->order->bundle()],
       'stores' => [$this->store->id()],
       'status' => TRUE,
-      'policy' => [
+      'plugin' => [
         'target_plugin_id' => 'order_percentage',
         'target_plugin_configuration' => [
           'percentage' => '0.10',

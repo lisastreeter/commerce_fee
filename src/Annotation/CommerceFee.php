@@ -5,13 +5,13 @@ namespace Drupal\commerce_fee\Annotation;
 use Drupal\Component\Annotation\Plugin;
 
 /**
- * Defines the fee policy annotation object.
+ * Defines the fee annotation object.
  *
- * Plugin namespace: Plugin\Commerce\FeePolicy.
+ * Plugin namespace: Plugin\Commerce\CommerceFee.
  *
  * @Annotation
  */
-class CommerceFeePolicy extends Plugin {
+class CommerceFee extends Plugin {
 
   /**
    * The plugin ID.
@@ -30,7 +30,7 @@ class CommerceFeePolicy extends Plugin {
   public $label;
 
   /**
-   * The policy entity type ID.
+   * The entity type ID.
    *
    * This is the entity type ID of the entity passed to the plugin during execution.
    * For example: 'commerce_order'.

@@ -83,7 +83,7 @@ class FeeConditionTest extends CommerceKernelTestBase {
       'order_types' => [$this->order->bundle()],
       'stores' => [$this->store->id()],
       'status' => TRUE,
-      'policy' => [
+      'plugin' => [
         'target_plugin_id' => 'order_percentage',
         'target_plugin_configuration' => [
           'amount' => '0.10',
@@ -151,7 +151,7 @@ class FeeConditionTest extends CommerceKernelTestBase {
       'order_types' => [$this->order->bundle()],
       'stores' => [$this->store->id()],
       'status' => TRUE,
-      'policy' => [
+      'plugin' => [
         'target_plugin_id' => 'order_percentage',
         'target_plugin_configuration' => [
           'amount' => '0.10',

@@ -6,7 +6,7 @@ use Drupal\commerce\ConditionGroup;
 use Drupal\commerce\Entity\CommerceContentEntityBase;
 use Drupal\commerce\Plugin\Commerce\Condition\ConditionInterface;
 use Drupal\commerce_order\Entity\OrderInterface;
-use Drupal\commerce_fee\Plugin\Commerce\FeePolicy\FeePolicyInterface;
+use Drupal\commerce_fee\Plugin\Commerce\CommerceFee\CommerceFeeInterface;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -168,19 +168,19 @@ class Fee extends CommerceContentEntityBase implements FeeInterface {
   /**
    * {@inheritdoc}
    */
-  public function getPolicy() {
-    if (!$this->get('policy')->isEmpty()) {
-      return $this->get('policy')->first()->getTargetInstance();
+  public function getPlugin() {
+    if (!$this->get('plugin')->isEmpty()) {
+      return $this->get('plugin')->first()->getTargetInstance();
     }
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setPolicy(FeePolicyInterface $policy) {
-    $this->set('policy', [
-      'target_plugin_id' => $policy->getPluginId(),
-      'target_plugin_configuration' => $policy->getConfiguration(),
+  public function setPlugin(CommerceFeeInterface $plugin) {
+    $this->set('plugin', [
+      'target_plugin_id' => $plugin->getPluginId(),
+      'target_plugin_configuration' => $plugin->getConfiguration(),
     ]);
     return $this;
   }
@@ -338,20 +338,20 @@ class Fee extends CommerceContentEntityBase implements FeeInterface {
    * {@inheritdoc}
    */
   public function apply(OrderInterface $order) {
-    $policy = $this->getPolicy();
-    if ($policy->getEntityTypeId() == 'commerce_order') {
-      $policy->apply($order, $this);
+    $plugin = $this->getPlugin();
+    if ($plugin->getEntityTypeId() == 'commerce_order') {
+      $plugin->apply($order, $this);
     }
-    elseif ($policy->getEntityTypeId() == 'commerce_order_item') {
+    elseif ($plugin->getEntityTypeId() == 'commerce_order_item') {
       $order_item_conditions = array_filter($this->getConditions(), function ($condition) {
         /** @var \Drupal\commerce\Plugin\Commerce\Condition\ConditionInterface $condition */
         return $condition->getEntityTypeId() == 'commerce_order_item';
       });
       $order_item_conditions = new ConditionGroup($order_item_conditions, 'AND');
-      // Apply the policy to order items that pass the conditions.
+      // Apply the plugin to order items that pass the conditions.
       foreach ($order->getItems() as $order_item) {
         if ($order_item_conditions->evaluate($order_item)) {
-          $policy->apply($order_item, $this);
+          $plugin->apply($order_item, $this);
         }
       }
     }
@@ -420,8 +420,8 @@ class Fee extends CommerceContentEntityBase implements FeeInterface {
         'weight' => 2,
       ]);
 
-    $fields['policy'] = BaseFieldDefinition::create('commerce_plugin_item:commerce_fee_policy')
-      ->setLabel(t('Policy'))
+    $fields['plugin'] = BaseFieldDefinition::create('commerce_plugin_item:commerce_fee')
+      ->setLabel(t('Fee'))
       ->setCardinality(1)
       ->setRequired(TRUE)
       ->setDisplayOptions('form', [
@@ -473,7 +473,7 @@ class Fee extends CommerceContentEntityBase implements FeeInterface {
       ->setRequired(FALSE)
       ->setSetting('datetime_type', 'date')
       ->setDisplayOptions('form', [
-        'type' => 'commerce_fee_end_date',
+        'type' => 'commerce_end_date',
         'weight' => 6,
       ]);
 

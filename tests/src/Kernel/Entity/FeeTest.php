@@ -6,7 +6,7 @@ use Drupal\commerce_order\Entity\OrderItemType;
 use Drupal\commerce_order\Entity\OrderType;
 use Drupal\commerce_price\RounderInterface;
 use Drupal\commerce_fee\Entity\Fee;
-use Drupal\commerce_fee\Plugin\Commerce\FeePolicy\OrderPercentage;
+use Drupal\commerce_fee\Plugin\Commerce\CommerceFee\OrderPercentage;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Tests\commerce\Kernel\CommerceKernelTestBase;
 
@@ -69,8 +69,8 @@ class FeeTest extends CommerceKernelTestBase {
    * @covers ::setStores
    * @covers ::setStoreIds
    * @covers ::getStoreIds
-   * @covers ::getPolicy
-   * @covers ::setPolicy
+   * @covers ::getPlugin
+   * @covers ::setPlugin
    * @covers ::getConditionOperator
    * @covers ::setConditionOperator
    * @covers ::getStartDate
@@ -106,10 +106,10 @@ class FeeTest extends CommerceKernelTestBase {
     $this->assertEquals([$this->store->id()], $fee->getStoreIds());
 
     $rounder = $this->prophesize(RounderInterface::class)->reveal();
-    $policy = new OrderPercentage(['percentage' => '0.5'], 'order_percentage', [], $rounder);
-    $fee->setPolicy($policy);
-    $this->assertEquals($policy->getPluginId(), $fee->getPolicy()->getPluginId());
-    $this->assertEquals($policy->getConfiguration(), $fee->getPolicy()->getConfiguration());
+    $plugin = new OrderPercentage(['percentage' => '0.5'], 'order_percentage', [], $rounder);
+    $fee->setPlugin($plugin);
+    $this->assertEquals($plugin->getPluginId(), $fee->getPlugin()->getPluginId());
+    $this->assertEquals($plugin->getConfiguration(), $fee->getPlugin()->getConfiguration());
 
     $this->assertEquals('AND', $fee->getConditionOperator());
     $fee->setConditionOperator('OR');

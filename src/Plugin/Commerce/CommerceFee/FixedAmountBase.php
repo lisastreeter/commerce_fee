@@ -1,14 +1,14 @@
 <?php
 
-namespace Drupal\commerce_fee\Plugin\Commerce\FeePolicy;
+namespace Drupal\commerce_fee\Plugin\Commerce\CommerceFee;
 
 use Drupal\commerce_price\Price;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Provides the base class for fixed amount policies.
+ * Provides the base class for fixed amount fees.
  */
-abstract class FixedAmountBase extends FeePolicyBase {
+abstract class FixedAmountBase extends CommerceFeeBase {
 
   /**
    * {@inheritdoc}
@@ -52,7 +52,7 @@ abstract class FixedAmountBase extends FeePolicyBase {
   }
 
   /**
-   * Gets the policy amount.
+   * Gets the fee amount.
    *
    * @return \Drupal\commerce_price\Price|null
    *   The amount, or NULL if unknown.

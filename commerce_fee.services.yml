@@ -1,6 +1,6 @@
 services:
-  plugin.manager.commerce_fee_policy:
-    class: Drupal\commerce_fee\FeePolicyManager
+  plugin.manager.commerce_fee:
+    class: Drupal\commerce_fee\CommerceFeeManager
     arguments: ['@container.namespaces', '@cache.discovery', '@module_handler', '@entity_type.manager']
 
   commerce_fee.fee_order_processor:
