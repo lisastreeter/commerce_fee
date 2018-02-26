@@ -101,13 +101,9 @@ class FeeConditionTest extends CommerceKernelTestBase {
           ],
         ],
         [
-          'target_plugin_id' => 'order_total_price',
+          'target_plugin_id' => 'order_email',
           'target_plugin_configuration' => [
-            'operator' => '>',
-            'amount' => [
-              'number' => '100.00',
-              'currency_code' => 'USD',
-            ],
+            'mail' => 'not_test@example.com',
           ],
         ],
       ],
@@ -134,8 +130,9 @@ class FeeConditionTest extends CommerceKernelTestBase {
     $result = $fee->applies($this->order);
     $this->assertTrue($result);
 
-    $order_item->setQuantity(11);
+    $order_item->setQuantity(3);
     $order_item->save();
+    $this->order->setEmail('not_test@example.com');
     $this->order->save();
     $result = $fee->applies($this->order);
     $this->assertTrue($result);
