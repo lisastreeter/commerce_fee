@@ -14,7 +14,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
  * @see \Drupal\commerce_fee\Annotation\CommerceFee
  * @see plugin_api
  */
-class CommerceFeeManager extends DefaultPluginManager {
+class FeeManager extends DefaultPluginManager {
 
   /**
    * The entity type manager.
@@ -24,7 +24,7 @@ class CommerceFeeManager extends DefaultPluginManager {
   protected $entityTypeManager;
 
   /**
-   * Constructs a new CommerceFeeManager object.
+   * Constructs a new FeeManager object.
    *
    * @param \Traversable $namespaces
    *   An object that implements \Traversable which contains the root paths
@@ -37,7 +37,7 @@ class CommerceFeeManager extends DefaultPluginManager {
    *   The entity type manager.
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler, EntityTypeManagerInterface $entity_type_manager) {
-    parent::__construct('Plugin/Commerce/CommerceFee', $namespaces, $module_handler, 'Drupal\commerce_fee\Plugin\Commerce\CommerceFee\CommerceFeeInterface', 'Drupal\commerce_fee\Annotation\CommerceFee');
+    parent::__construct('Plugin/Commerce/Fee', $namespaces, $module_handler, 'Drupal\commerce_fee\Plugin\Commerce\Fee\FeeInterface', 'Drupal\commerce_fee\Annotation\CommerceFee');
 
     $this->alterInfo('commerce_fee_info');
     $this->setCacheBackend($cache_backend, 'commerce_fees');

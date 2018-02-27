@@ -6,7 +6,7 @@ use Drupal\commerce_order\Entity\OrderItemType;
 use Drupal\commerce_order\Entity\OrderType;
 use Drupal\commerce_price\RounderInterface;
 use Drupal\commerce_fee\Entity\Fee;
-use Drupal\commerce_fee\Plugin\Commerce\CommerceFee\OrderPercentage;
+use Drupal\commerce_fee\Plugin\Commerce\Fee\OrderPercentage;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Tests\commerce\Kernel\CommerceKernelTestBase;
 

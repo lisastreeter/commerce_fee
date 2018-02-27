@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\commerce_fee\Plugin\Commerce\CommerceFee;
+namespace Drupal\commerce_fee\Plugin\Commerce\Fee;
 
 use Drupal\commerce_order\Adjustment;
 use Drupal\commerce_fee\Entity\FeeInterface;

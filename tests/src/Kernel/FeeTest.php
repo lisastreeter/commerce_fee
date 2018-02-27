@@ -16,14 +16,14 @@ use Drupal\Tests\commerce\Kernel\CommerceKernelTestBase;
  *
  * @group commerce
  */
-class CommerceFeeTest extends CommerceKernelTestBase {
+class FeeTest extends CommerceKernelTestBase {
 
   /**
-   * The commerce fee manager.
+   * The fee manager.
    *
-   * @var \Drupal\commerce_fee\CommerceFeeManager
+   * @var \Drupal\commerce_fee\FeeManager
    */
-  protected $commerceFeeManager;
+  protected $feeManager;
 
   /**
    * The test order.
@@ -65,7 +65,7 @@ class CommerceFeeTest extends CommerceKernelTestBase {
       'commerce_product',
       'commerce_fee',
     ]);
-    $this->commerceFeeManager = $this->container->get('plugin.manager.commerce_fee');
+    $this->feeManager = $this->container->get('plugin.manager.commerce_fee');
 
     OrderItemType::create([
       'id' => 'test',

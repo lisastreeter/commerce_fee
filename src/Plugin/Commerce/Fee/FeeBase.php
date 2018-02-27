@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\commerce_fee\Plugin\Commerce\CommerceFee;
+namespace Drupal\commerce_fee\Plugin\Commerce\Fee;
 
 use Drupal\commerce_price\RounderInterface;
 use Drupal\Component\Utility\NestedArray;
@@ -13,7 +13,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Provides the base class for fee policies.
  */
-abstract class CommerceFeeBase extends PluginBase implements CommerceFeeInterface, ContainerFactoryPluginInterface {
+abstract class FeeBase extends PluginBase implements FeeInterface, ContainerFactoryPluginInterface {
 
   /**
    * The rounder.
@@ -23,7 +23,7 @@ abstract class CommerceFeeBase extends PluginBase implements CommerceFeeInterfac
   protected $rounder;
 
   /**
-   * Constructs a new CommerceFeeBase object.
+   * Constructs a new FeeBase object.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.

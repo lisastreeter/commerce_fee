@@ -6,7 +6,7 @@ use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_store\Entity\EntityStoresInterface;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\ContentEntityInterface;
-use Drupal\commerce_fee\Plugin\Commerce\CommerceFee\CommerceFeeInterface;
+use Drupal\commerce_fee\Plugin\Commerce\Fee\FeeInterface as FeePluginInterface;
 
 /**
  * Defines the interface for fees.
@@ -88,7 +88,7 @@ interface FeeInterface extends ContentEntityInterface, EntityStoresInterface {
   /**
    * Gets the plugin.
    *
-   * @return \Drupal\commerce_fee\Plugin\Commerce\CommerceFee\CommerceFeeInterface|null
+   * @return \Drupal\commerce_fee\Plugin\Commerce\Fee\FeeInterface|null
    *   The plugin, or NULL if not yet available.
    */
   public function getPlugin();
@@ -96,12 +96,12 @@ interface FeeInterface extends ContentEntityInterface, EntityStoresInterface {
   /**
    * Sets the plugin.
    *
-   * @param \Drupal\commerce_fee\Plugin\Commerce\CommerceFee\CommerceFeeInterface $plugin
+   * @param \Drupal\commerce_fee\Plugin\Commerce\Fee\FeeInterface $plugin
    *   The plugin.
    *
    * @return $this
    */
-  public function setPlugin(CommerceFeeInterface $plugin);
+  public function setPlugin(FeePluginInterface $plugin);
 
   /**
    * Gets the conditions.

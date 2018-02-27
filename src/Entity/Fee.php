@@ -6,7 +6,7 @@ use Drupal\commerce\ConditionGroup;
 use Drupal\commerce\Entity\CommerceContentEntityBase;
 use Drupal\commerce\Plugin\Commerce\Condition\ConditionInterface;
 use Drupal\commerce_order\Entity\OrderInterface;
-use Drupal\commerce_fee\Plugin\Commerce\CommerceFee\CommerceFeeInterface;
+use Drupal\commerce_fee\Plugin\Commerce\Fee\FeeInterface as FeePluginInterface;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -177,7 +177,7 @@ class Fee extends CommerceContentEntityBase implements FeeInterface {
   /**
    * {@inheritdoc}
    */
-  public function setPlugin(CommerceFeeInterface $plugin) {
+  public function setPlugin(FeePluginInterface $plugin) {
     $this->set('plugin', [
       'target_plugin_id' => $plugin->getPluginId(),
       'target_plugin_configuration' => $plugin->getConfiguration(),

@@ -7,7 +7,7 @@ use Drupal\Component\Annotation\Plugin;
 /**
  * Defines the fee annotation object.
  *
- * Plugin namespace: Plugin\Commerce\CommerceFee.
+ * Plugin namespace: Plugin\Commerce\Fee.
  *
  * @Annotation
  */

@@ -1,13 +1,13 @@
 <?php
 
-namespace Drupal\commerce_fee\Plugin\Commerce\CommerceFee;
+namespace Drupal\commerce_fee\Plugin\Commerce\Fee;
 
 use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Provides the base class for percentage fees.
  */
-abstract class PercentageBase extends CommerceFeeBase {
+abstract class PercentageBase extends FeeBase {
 
   /**
    * {@inheritdoc}
