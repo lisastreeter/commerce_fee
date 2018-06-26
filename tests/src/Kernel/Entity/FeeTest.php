@@ -6,7 +6,7 @@ use Drupal\commerce_order\Entity\OrderItemType;
 use Drupal\commerce_order\Entity\OrderType;
 use Drupal\commerce_price\RounderInterface;
 use Drupal\commerce_fee\Entity\Fee;
-use Drupal\commerce_fee\Plugin\Commerce\Fee\OrderPercentage;
+use Drupal\commerce_fee\Plugin\Commerce\Fee\OrderItemPercentage;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Tests\commerce\Kernel\CommerceKernelTestBase;
 
@@ -106,7 +106,7 @@ class FeeTest extends CommerceKernelTestBase {
     $this->assertEquals([$this->store->id()], $fee->getStoreIds());
 
     $rounder = $this->prophesize(RounderInterface::class)->reveal();
-    $plugin = new OrderPercentage(['percentage' => '0.5'], 'order_percentage', [], $rounder);
+    $plugin = new OrderItemPercentage(['percentage' => '0.5'], 'order_percentage', [], $rounder);
     $fee->setPlugin($plugin);
     $this->assertEquals($plugin->getPluginId(), $fee->getPlugin()->getPluginId());
     $this->assertEquals($plugin->getConfiguration(), $fee->getPlugin()->getConfiguration());

@@ -2,10 +2,10 @@
 
 namespace Drupal\Tests\commerce_fee\Kernel;
 
+use Drupal\commerce_fee\Entity\Fee;
 use Drupal\commerce_price\Price;
 use Drupal\commerce_product\Entity\Product;
 use Drupal\commerce_product\Entity\ProductVariation;
-use Drupal\commerce_fee\Entity\Fee;
 use Drupal\Tests\commerce_cart\Kernel\CartManagerTestTrait;
 use Drupal\Tests\commerce\Kernel\CommerceKernelTestBase;
 
@@ -109,7 +109,7 @@ class FeeCartTest extends CommerceKernelTestBase {
     $cart = $this->cartProvider->createCart('default', $this->store, $user);
     $this->cartManager->addEntity($cart, $variation);
 
-    $this->assertEquals(1, count($cart->getAdjustments()));
+    $this->assertEquals(1, count($cart->collectAdjustments()));
     $this->assertEquals(new Price('11.00', 'USD'), $cart->getTotalPrice());
 
     // Disable the fee.

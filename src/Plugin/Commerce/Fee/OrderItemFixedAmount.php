@@ -24,11 +24,13 @@ class OrderItemFixedAmount extends FixedAmountBase {
     $this->assertEntity($entity);
     /** @var \Drupal\commerce_order\Entity\OrderItemInterface $order_item */
     $order_item = $entity;
-    $unit_price = $order_item->getUnitPrice();
+    $unit_price = $order_item->getTotalPrice();
     $adjustment_amount = $this->getAmount();
     if ($unit_price->getCurrencyCode() != $adjustment_amount->getCurrencyCode()) {
       return;
     }
+    $adjustment_amount = $adjustment_amount->multiply($order_item->getQuantity());
+    $adjustment_amount = $this->rounder->round($adjustment_amount);
 
     $order_item->addAdjustment(new Adjustment([
       'type' => 'fee',

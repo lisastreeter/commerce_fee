@@ -2,6 +2,7 @@
 
 namespace Drupal\commerce_fee\Plugin\Commerce\Fee;
 
+use Drupal\commerce_price\Calculator;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
@@ -37,7 +38,7 @@ abstract class PercentageBase extends FeeBase {
     $form['percentage'] = [
       '#type' => 'commerce_number',
       '#title' => $this->t('Percentage'),
-      '#default_value' => $this->configuration['percentage'] * 100,
+      '#default_value' => Calculator::multiply($this->getPercentage(), '100'),
       '#maxlength' => 255,
       '#min' => 0,
       '#size' => 4,

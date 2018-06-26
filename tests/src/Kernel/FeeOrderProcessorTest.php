@@ -2,11 +2,11 @@
 
 namespace Drupal\Tests\commerce_fee\Kernel;
 
+use Drupal\commerce_fee\Entity\Fee;
 use Drupal\commerce_order\Entity\Order;
 use Drupal\commerce_order\Entity\OrderItem;
 use Drupal\commerce_order\Entity\OrderItemType;
 use Drupal\commerce_price\Price;
-use Drupal\commerce_fee\Entity\Fee;
 use Drupal\Tests\commerce\Kernel\CommerceKernelTestBase;
 
 /**
@@ -117,10 +117,11 @@ class FeeOrderProcessorTest extends CommerceKernelTestBase {
     ]);
     $fee->save();
 
-    $this->assertNotEmpty($fee->applies($this->order));
+    $this->assertTrue($fee->applies($this->order));
     $this->container->get('commerce_order.order_refresh')->refresh($this->order);
+    $this->order->recalculateTotalPrice();
 
-    $this->assertEquals(1, count($this->order->getAdjustments()));
+    $this->assertEquals(1, count($this->order->collectAdjustments()));
     $this->assertEquals(new Price('44.00', 'USD'), $this->order->getTotalPrice());
   }
 
