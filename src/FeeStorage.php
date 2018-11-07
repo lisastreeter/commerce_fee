@@ -66,7 +66,6 @@ class FeeStorage extends CommerceContentEntityStorage implements FeeStorageInter
     );
   }
 
-
   /**
    * {@inheritdoc}
    */
