@@ -337,7 +337,7 @@ class FeeTest extends CommerceKernelTestBase {
     $this->assertEquals(new Price('50.00', 'USD'), $order_item->getAdjustedTotalPrice());
     $this->assertEquals(new Price('30.00', 'USD'), $order_item->getAdjustments()[0]->getAmount());
 
-    // Offer amount larger than the order item unit price.
+    // Fee amount larger than the order item unit price.
     $variation->setPrice(new Price('20', 'USD'));
     $variation->save();
     $this->container->get('commerce_order.order_refresh')->refresh($this->order);

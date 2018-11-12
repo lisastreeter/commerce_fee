@@ -15,7 +15,9 @@ use Drupal\Core\Entity\EntityInterface;
  *   entity_type = "commerce_order_item",
  * )
  */
-class OrderItemFixedAmount extends FixedAmountBase {
+class OrderItemFixedAmount extends OrderItemFeeBase {
+
+  use FixedAmountTrait;
 
   /**
    * {@inheritdoc}
@@ -24,12 +26,12 @@ class OrderItemFixedAmount extends FixedAmountBase {
     $this->assertEntity($entity);
     /** @var \Drupal\commerce_order\Entity\OrderItemInterface $order_item */
     $order_item = $entity;
-    $unit_price = $order_item->getTotalPrice();
-    $adjustment_amount = $this->getAmount();
-    if ($unit_price->getCurrencyCode() != $adjustment_amount->getCurrencyCode()) {
+    $total_price = $order_item->getTotalPrice();
+    $amount = $this->getAmount();
+    if ($total_price->getCurrencyCode() != $amount->getCurrencyCode()) {
       return;
     }
-    $adjustment_amount = $adjustment_amount->multiply($order_item->getQuantity());
+    $adjustment_amount = $amount->multiply($order_item->getQuantity());
     $adjustment_amount = $this->rounder->round($adjustment_amount);
 
     $order_item->addAdjustment(new Adjustment([

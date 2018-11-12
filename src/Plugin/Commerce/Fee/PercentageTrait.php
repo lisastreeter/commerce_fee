@@ -6,9 +6,9 @@ use Drupal\commerce_price\Calculator;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Provides the base class for percentage fees.
+ * Provides common configuration for percentage fees.
  */
-abstract class PercentageBase extends FeeBase {
+trait PercentageTrait {
 
   /**
    * {@inheritdoc}
@@ -20,20 +20,10 @@ abstract class PercentageBase extends FeeBase {
   }
 
   /**
-   * Gets the percentage.
-   *
-   * @return string
-   *   The percentage.
-   */
-  public function getPercentage() {
-    return (string) $this->configuration['percentage'];
-  }
-
-  /**
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
-    $form += parent::buildConfigurationForm($form, $form_state);
+    $form = parent::buildConfigurationForm($form, $form_state);
 
     $form['percentage'] = [
       '#type' => 'commerce_number',
@@ -44,6 +34,7 @@ abstract class PercentageBase extends FeeBase {
       '#size' => 4,
       '#field_suffix' => $this->t('%'),
       '#required' => TRUE,
+      '#weight' => -1,
     ];
 
     return $form;
@@ -65,8 +56,20 @@ abstract class PercentageBase extends FeeBase {
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
     parent::submitConfigurationForm($form, $form_state);
 
-    $values = $form_state->getValue($form['#parents']);
-    $this->configuration['percentage'] = (string) ($values['percentage'] / 100);
+    if (!$form_state->getErrors()) {
+      $values = $form_state->getValue($form['#parents']);
+      $this->configuration['percentage'] = (string) ($values['percentage'] / 100);
+    }
+  }
+
+  /**
+   * Gets the percentage.
+   *
+   * @return string
+   *   The percentage.
+   */
+  protected function getPercentage() {
+    return (string) $this->configuration['percentage'];
   }
 
 }

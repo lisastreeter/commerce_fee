@@ -6,9 +6,9 @@ use Drupal\commerce_price\Price;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Provides the base class for fixed amount fees.
+ * Provides common configuration for fixed amount fees.
  */
-abstract class FixedAmountBase extends FeeBase {
+trait FixedAmountTrait {
 
   /**
    * {@inheritdoc}
@@ -23,7 +23,7 @@ abstract class FixedAmountBase extends FeeBase {
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
-    $form += parent::buildConfigurationForm($form, $form_state);
+    $form = parent::buildConfigurationForm($form, $form_state);
 
     $amount = $this->configuration['amount'];
     // A bug in the plugin_select form element causes $amount to be incomplete.
@@ -36,6 +36,7 @@ abstract class FixedAmountBase extends FeeBase {
       '#title' => $this->t('Amount'),
       '#default_value' => $amount,
       '#required' => TRUE,
+      '#weight' => -1,
     ];
 
     return $form;
@@ -47,8 +48,10 @@ abstract class FixedAmountBase extends FeeBase {
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
     parent::submitConfigurationForm($form, $form_state);
 
-    $values = $form_state->getValue($form['#parents']);
-    $this->configuration['amount'] = $values['amount'];
+    if (!$form_state->getErrors()) {
+      $values = $form_state->getValue($form['#parents']);
+      $this->configuration['amount'] = $values['amount'];
+    }
   }
 
   /**

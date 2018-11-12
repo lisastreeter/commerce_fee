@@ -11,7 +11,7 @@ use Drupal\Core\Plugin\PluginBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Provides the base class for fee policies.
+ * Provides the base class for fees.
  */
 abstract class FeeBase extends PluginBase implements FeeInterface, ContainerFactoryPluginInterface {
 
@@ -86,6 +86,11 @@ abstract class FeeBase extends PluginBase implements FeeInterface, ContainerFact
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
+    // Wrap the fee configuration in a fieldset by default.
+    $form['#type'] = 'fieldset';
+    $form['#title'] = $this->t('Fee');
+    $form['#collapsible'] = FALSE;
+
     return $form;
   }
 
@@ -98,7 +103,9 @@ abstract class FeeBase extends PluginBase implements FeeInterface, ContainerFact
    * {@inheritdoc}
    */
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
-    $this->configuration = [];
+    if (!$form_state->getErrors()) {
+      $this->configuration = [];
+    }
   }
 
   /**
@@ -116,9 +123,9 @@ abstract class FeeBase extends PluginBase implements FeeInterface, ContainerFact
    */
   protected function assertEntity(EntityInterface $entity) {
     $entity_type_id = $entity->getEntityTypeId();
-    $plugin_entity_type_id = $this->getEntityTypeId();
-    if ($entity_type_id != $plugin_entity_type_id) {
-      throw new \InvalidArgumentException(sprintf('The plugin requires a "%s" entity, but a "%s" entity was given.', $plugin_entity_type_id, $entity_type_id));
+    $fee_entity_type_id = $this->getEntityTypeId();
+    if ($entity_type_id != $fee_entity_type_id) {
+      throw new \InvalidArgumentException(sprintf('The fee requires a "%s" entity, but a "%s" entity was given.', $fee_entity_type_id, $entity_type_id));
     }
   }
 
