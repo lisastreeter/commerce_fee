@@ -6,6 +6,7 @@ use Drupal\commerce\ConditionGroup;
 use Drupal\commerce\Entity\CommerceContentEntityBase;
 use Drupal\commerce\Plugin\Commerce\Condition\ConditionInterface;
 use Drupal\commerce_order\Entity\OrderInterface;
+use Drupal\commerce_fee\Plugin\Commerce\Fee\OrderItemFeeInterface;
 use Drupal\commerce_fee\Plugin\Commerce\Fee\FeeInterface as FeePluginInterface;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -310,28 +311,9 @@ class Fee extends CommerceContentEntityBase implements FeeInterface {
       // Fees without conditions always apply.
       return TRUE;
     }
-    $order_conditions = array_filter($conditions, function ($condition) {
-      /** @var \Drupal\commerce\Plugin\Commerce\Condition\ConditionInterface $condition */
-      return $condition->getEntityTypeId() == 'commerce_order';
-    });
-    $order_item_conditions = array_filter($conditions, function ($condition) {
-      /** @var \Drupal\commerce\Plugin\Commerce\Condition\ConditionInterface $condition */
-      return $condition->getEntityTypeId() == 'commerce_order_item';
-    });
-    $order_conditions = new ConditionGroup($order_conditions, $this->getConditionOperator());
-    $order_item_conditions = new ConditionGroup($order_item_conditions, $this->getConditionOperator());
+    $condition_group = new ConditionGroup($conditions, $this->getConditionOperator());
 
-    if (!$order_conditions->evaluate($order)) {
-      return FALSE;
-    }
-    foreach ($order->getItems() as $order_item) {
-      // Order item conditions must match at least one order item.
-      if ($order_item_conditions->evaluate($order_item)) {
-        return TRUE;
-      }
-    }
-
-    return FALSE;
+    return $condition_group->evaluate($order);
   }
 
   /**
@@ -339,21 +321,17 @@ class Fee extends CommerceContentEntityBase implements FeeInterface {
    */
   public function apply(OrderInterface $order) {
     $plugin = $this->getPlugin();
-    if ($plugin->getEntityTypeId() == 'commerce_order') {
-      $plugin->apply($order, $this);
-    }
-    elseif ($plugin->getEntityTypeId() == 'commerce_order_item') {
-      $order_item_conditions = array_filter($this->getConditions(), function ($condition) {
-        /** @var \Drupal\commerce\Plugin\Commerce\Condition\ConditionInterface $condition */
-        return $condition->getEntityTypeId() == 'commerce_order_item';
-      });
-      $order_item_conditions = new ConditionGroup($order_item_conditions, 'AND');
+    if ($plugin instanceof OrderItemFeeInterface) {
+      $fee_conditions = new ConditionGroup($plugin->getConditions(), 'OR');
       // Apply the plugin to order items that pass the conditions.
       foreach ($order->getItems() as $order_item) {
-        if ($order_item_conditions->evaluate($order_item)) {
+        if ($fee_conditions->evaluate($order_item)) {
           $plugin->apply($order_item, $this);
         }
       }
+    }
+    else {
+      $plugin->apply($order, $this);
     }
   }
 
@@ -421,7 +399,7 @@ class Fee extends CommerceContentEntityBase implements FeeInterface {
       ]);
 
     $fields['plugin'] = BaseFieldDefinition::create('commerce_plugin_item:commerce_fee')
-      ->setLabel(t('Fee'))
+      ->setLabel(t('Fee type'))
       ->setCardinality(1)
       ->setRequired(TRUE)
       ->setDisplayOptions('form', [
@@ -437,7 +415,7 @@ class Fee extends CommerceContentEntityBase implements FeeInterface {
         'type' => 'commerce_conditions',
         'weight' => 3,
         'settings' => [
-          'entity_types' => ['commerce_order', 'commerce_order_item'],
+          'entity_types' => ['commerce_order'],
         ],
       ]);
 

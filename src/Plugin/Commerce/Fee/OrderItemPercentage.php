@@ -15,7 +15,9 @@ use Drupal\Core\Entity\EntityInterface;
  *   entity_type = "commerce_order_item",
  * )
  */
-class OrderItemPercentage extends PercentageBase {
+class OrderItemPercentage extends OrderItemFeeBase {
+
+  use PercentageTrait;
 
   /**
    * {@inheritdoc}
@@ -24,7 +26,8 @@ class OrderItemPercentage extends PercentageBase {
     $this->assertEntity($entity);
     /** @var \Drupal\commerce_order\Entity\OrderItemInterface $order_item */
     $order_item = $entity;
-    $adjustment_amount = $order_item->getTotalPrice()->multiply($this->getPercentage());
+    $percentage = $this->getPercentage();
+    $adjustment_amount = $order_item->getTotalPrice()->multiply($percentage);
     $adjustment_amount = $this->rounder->round($adjustment_amount);
 
     $order_item->addAdjustment(new Adjustment([
@@ -32,7 +35,7 @@ class OrderItemPercentage extends PercentageBase {
       // @todo Change to label from UI when added in #2770731.
       'label' => t('Fee'),
       'amount' => $adjustment_amount,
-      'percentage' => $this->getPercentage(),
+      'percentage' => $percentage,
       'source_id' => $fee->id(),
     ]));
   }
