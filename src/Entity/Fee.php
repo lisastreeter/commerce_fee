@@ -5,6 +5,7 @@ namespace Drupal\commerce_fee\Entity;
 use Drupal\commerce\ConditionGroup;
 use Drupal\commerce\Entity\CommerceContentEntityBase;
 use Drupal\commerce\Plugin\Commerce\Condition\ConditionInterface;
+use Drupal\commerce\Plugin\Commerce\Condition\ParentEntityAwareInterface;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_fee\Plugin\Commerce\Fee\OrderItemFeeInterface;
 use Drupal\commerce_fee\Plugin\Commerce\Fee\FeeInterface as FeePluginInterface;
@@ -12,36 +13,42 @@ use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 
 /**
  * Defines the fee entity class.
  *
  * @ContentEntityType(
  *   id = "commerce_fee",
- *   label = @Translation("Fee"),
- *   label_collection = @Translation("Fees"),
- *   label_singular = @Translation("fee"),
- *   label_plural = @Translation("fees"),
+ *   label = @Translation("Fee", context = "Commerce"),
+ *   label_collection = @Translation("Fees", context = "Commerce"),
+ *   label_singular = @Translation("fee", context = "Commerce"),
+ *   label_plural = @Translation("fees", context = "Commerce"),
  *   label_count = @PluralTranslation(
  *     singular = "@count fee",
  *     plural = "@count fees",
+ *     context = "Commerce",
  *   ),
  *   handlers = {
  *     "event" = "Drupal\commerce_fee\Event\FeeEvent",
  *     "storage" = "Drupal\commerce_fee\FeeStorage",
  *     "access" = "Drupal\entity\EntityAccessControlHandler",
- *     "permission_provider" = "Drupal\commerce\EntityPermissionProvider",
+ *     "permission_provider" = "Drupal\entity\EntityPermissionProvider",
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
  *     "list_builder" = "Drupal\commerce_fee\FeeListBuilder",
- *     "views_data" = "Drupal\views\EntityViewsData",
+ *     "views_data" = "Drupal\commerce_fee\FeeViewsData",
  *     "form" = {
  *       "default" = "Drupal\commerce_fee\Form\FeeForm",
  *       "add" = "Drupal\commerce_fee\Form\FeeForm",
  *       "edit" = "Drupal\commerce_fee\Form\FeeForm",
+ *       "duplicate" = "Drupal\commerce_fee\Form\FeeForm",
  *       "delete" = "Drupal\Core\Entity\ContentEntityDeleteForm"
  *     },
+ *     "local_task_provider" = {
+ *       "default" = "Drupal\entity\Menu\DefaultEntityLocalTaskProvider",
+ *     },
  *     "route_provider" = {
- *       "default" = "Drupal\Core\Entity\Routing\AdminHtmlRouteProvider",
+ *       "default" = "Drupal\entity\Routing\AdminHtmlRouteProvider",
  *       "delete-multiple" = "Drupal\entity\Routing\DeleteMultipleRouteProvider",
  *     },
  *     "translation" = "Drupal\content_translation\ContentTranslationHandler"
@@ -60,6 +67,7 @@ use Drupal\Core\Field\BaseFieldDefinition;
  *   links = {
  *     "add-form" = "/fee/add",
  *     "edit-form" = "/fee/{commerce_fee}/edit",
+ *     "duplicate-form" = "/fee/{commerce_fee}/duplicate",
  *     "delete-form" = "/fee/{commerce_fee}/delete",
  *     "delete-multiple-form" = "/admin/commerce/fees/delete",
  *     "collection" = "/admin/commerce/fees",
@@ -193,7 +201,11 @@ class Fee extends CommerceContentEntityBase implements FeeInterface {
     $conditions = [];
     foreach ($this->get('conditions') as $field_item) {
       /** @var \Drupal\commerce\Plugin\Field\FieldType\PluginItemInterface $field_item */
-      $conditions[] = $field_item->getTargetInstance();
+      $condition = $field_item->getTargetInstance();
+      if ($condition instanceof ParentEntityAwareInterface) {
+        $condition->setParentEntity($this);
+      }
+      $conditions[] = $condition;
     }
     return $conditions;
   }
@@ -232,25 +244,24 @@ class Fee extends CommerceContentEntityBase implements FeeInterface {
   /**
    * {@inheritdoc}
    */
-  public function getStartDate() {
-    // Can't use the ->date property because it resets the timezone to UTC.
-    return new DrupalDateTime($this->get('start_date')->value);
+  public function getStartDate($store_timezone = 'UTC') {
+    return new DrupalDateTime($this->get('start_date')->value, $store_timezone);
   }
 
   /**
    * {@inheritdoc}
    */
   public function setStartDate(DrupalDateTime $start_date) {
-    $this->get('start_date')->value = $start_date->format('Y-m-d');
+    $this->get('start_date')->value = $start_date->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT);
     return $this;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getEndDate() {
+  public function getEndDate($store_timezone = 'UTC') {
     if (!$this->get('end_date')->isEmpty()) {
-      return new DrupalDateTime($this->get('end_date')->value);
+      return new DrupalDateTime($this->get('end_date')->value, $store_timezone);
     }
   }
 
@@ -258,8 +269,10 @@ class Fee extends CommerceContentEntityBase implements FeeInterface {
    * {@inheritdoc}
    */
   public function setEndDate(DrupalDateTime $end_date = NULL) {
-    $this->get('end_date')->value = $end_date ? $end_date->format('Y-m-d') : NULL;
-    return $this;
+    $this->get('end_date')->value = NULL;
+    if ($end_date) {
+      $this->get('end_date')->value = $end_date->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT);
+    }
   }
 
   /**
@@ -290,12 +303,14 @@ class Fee extends CommerceContentEntityBase implements FeeInterface {
     if (!in_array($order->getStoreId(), $this->getStoreIds())) {
       return FALSE;
     }
-    $time = \Drupal::time()->getRequestTime();
-    if ($this->getStartDate()->format('U') > $time) {
+    $date = $order->getCalculationDate();
+    $store_timezone = $date->getTimezone()->getName();
+    $start_date = $this->getStartDate($store_timezone);
+    if ($start_date->format('U') > $date->format('U')) {
       return FALSE;
     }
-    $end_date = $this->getEndDate();
-    if ($end_date && $end_date->format('U') <= $time) {
+    $end_date = $this->getEndDate($store_timezone);
+    if ($end_date && $end_date->format('U') <= $date->format('U')) {
       return FALSE;
     }
 
@@ -438,10 +453,10 @@ class Fee extends CommerceContentEntityBase implements FeeInterface {
       ->setLabel(t('Start date'))
       ->setDescription(t('The date the fee becomes valid.'))
       ->setRequired(TRUE)
-      ->setSetting('datetime_type', 'date')
+      ->setSetting('datetime_type', 'datetime')
       ->setDefaultValueCallback('Drupal\commerce_fee\Entity\Fee::getDefaultStartDate')
       ->setDisplayOptions('form', [
-        'type' => 'datetime_default',
+        'type' => 'commerce_store_datetime',
         'weight' => 5,
       ]);
 
@@ -449,9 +464,10 @@ class Fee extends CommerceContentEntityBase implements FeeInterface {
       ->setLabel(t('End date'))
       ->setDescription(t('The date after which the fee is invalid.'))
       ->setRequired(FALSE)
-      ->setSetting('datetime_type', 'date')
+      ->setSetting('datetime_type', 'datetime')
+      ->setSetting('datetime_optional_label', t('Provide an end date'))
       ->setDisplayOptions('form', [
-        'type' => 'commerce_end_date',
+        'type' => 'commerce_store_datetime',
         'weight' => 6,
       ]);
 
@@ -482,21 +498,7 @@ class Fee extends CommerceContentEntityBase implements FeeInterface {
    */
   public static function getDefaultStartDate() {
     $timestamp = \Drupal::time()->getRequestTime();
-    return gmdate('Y-m-d', $timestamp);
-  }
-
-  /**
-   * Default value callback for 'end_date' base field definition.
-   *
-   * @see ::baseFieldDefinitions()
-   *
-   * @return int
-   *   The default value (date string).
-   */
-  public static function getDefaultEndDate() {
-    // Today + 1 year.
-    $timestamp = \Drupal::time()->getRequestTime();
-    return gmdate('Y-m-d', $timestamp + 31536000);
+    return gmdate(DateTimeItemInterface::DATETIME_STORAGE_FORMAT, $timestamp);
   }
 
 }

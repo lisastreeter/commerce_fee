@@ -2,8 +2,8 @@
 
 namespace Drupal\commerce_fee\Plugin\Commerce\Fee;
 
-use Drupal\commerce_fee\Entity\FeeInterface;
 use Drupal\commerce_order\Adjustment;
+use Drupal\commerce_fee\Entity\FeeInterface;
 use Drupal\Core\Entity\EntityInterface;
 
 /**

@@ -43,8 +43,8 @@ class FeeListBuilder extends EntityListBuilder {
     if (!$entity->isEnabled()) {
       $row['name'] .= ' (' . $this->t('Disabled') . ')';
     }
-    $row['start_date'] = $entity->getStartDate()->format('M jS Y');
-    $row['end_date'] = $entity->getEndDate() ? $entity->getEndDate()->format('M jS Y') : '—';
+    $row['start_date'] = $entity->getStartDate()->format('M jS Y H:i:s');
+    $row['end_date'] = $entity->getEndDate() ? $entity->getEndDate()->format('M jS Y H:i:s') : '—';
 
     return $row + parent::buildRow($entity);
   }

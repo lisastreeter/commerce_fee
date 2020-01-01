@@ -140,36 +140,58 @@ interface FeeInterface extends ContentEntityInterface, EntityStoresInterface {
   public function setConditionOperator($condition_operator);
 
   /**
-   * Gets the fee start date.
+   * Gets the fee start date/time.
+   *
+   * The start date/time should always be used in the store timezone.
+   * Since the fee can belong to multiple stores, the timezone
+   * isn't known at load/save time, and is provided by the caller instead.
+   *
+   * Note that the returned date/time value is the same in any timezone,
+   * the "2019-10-17 10:00" stored value is returned as "2019-10-17 10:00 CET"
+   * for "Europe/Berlin" and "2019-10-17 10:00 ET" for "America/New_York".
+   *
+   * @param string $store_timezone
+   *   The store timezone. E.g. "Europe/Berlin".
    *
    * @return \Drupal\Core\Datetime\DrupalDateTime
-   *   The fee start date.
+   *   The promotion start date/time.
    */
-  public function getStartDate();
+  public function getStartDate($store_timezone = 'UTC');
 
   /**
-   * Sets the fee start date.
+   * Sets the fee start date/time.
    *
    * @param \Drupal\Core\Datetime\DrupalDateTime $start_date
-   *   The fee start date.
+   *   The fee start date/time.
    *
    * @return $this
    */
   public function setStartDate(DrupalDateTime $start_date);
 
   /**
-   * Gets the fee end date.
+   * Gets the fee end date/time.
+   *
+   * The end date/time should always be used in the store timezone.
+   * Since the promotion can belong to multiple stores, the timezone
+   * isn't known at load/save time, and is provided by the caller instead.
+   *
+   * Note that the returned date/time value is the same in any timezone,
+   * the "2019-10-17 11:00" stored value is returned as "2019-10-17 11:00 CET"
+   * for "Europe/Berlin" and "2019-10-17 11:00 ET" for "America/New_York".
+   *
+   * @param string $store_timezone
+   *   The store timezone. E.g. "Europe/Berlin".
    *
    * @return \Drupal\Core\Datetime\DrupalDateTime
-   *   The fee end date.
+   *   The fee end date/time.
    */
-  public function getEndDate();
+  public function getEndDate($store_timezone = 'UTC');
 
   /**
-   * Sets the fee end date.
+   * Sets the fee end date/time.
    *
    * @param \Drupal\Core\Datetime\DrupalDateTime $end_date
-   *   The fee end date.
+   *   The fee end date/time.
    *
    * @return $this
    */

@@ -28,4 +28,12 @@ interface OrderItemFeeInterface extends FeeInterface {
    */
   public function setConditions(array $conditions);
 
+  /**
+   * Gets the condition operator.
+   *
+   * @return string
+   *   The condition operator. Possible values: AND, OR.
+   */
+  public function getConditionOperator();
+
 }
