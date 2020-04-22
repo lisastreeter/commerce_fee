@@ -64,7 +64,7 @@ class FeeOrderProcessorTest extends CommerceKernelTestBase {
 
     $this->order = Order::create([
       'type' => 'default',
-      'state' => 'completed',
+      'state' => 'draft',
       'mail' => 'test@example.com',
       'ip_address' => '127.0.0.1',
       'order_number' => '6',

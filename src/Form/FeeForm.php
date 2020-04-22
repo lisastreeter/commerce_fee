@@ -38,6 +38,15 @@ class FeeForm extends ContentEntityForm {
     $form = parent::form($form, $form_state);
 
     $form['#tree'] = TRUE;
+
+    $translating = !$this->isDefaultFormLangcode($form_state);
+    $hide_non_translatable_fields = $this->entity->isDefaultTranslationAffectedOnly();
+    // The second column is empty when translating with non-translatable
+    // fields hidden, so there's no reason to add it.
+    if ($translating && $hide_non_translatable_fields) {
+      return $form;
+    }
+
     $form['#theme'] = ['commerce_fee_form'];
     $form['#attached']['library'][] = 'commerce_fee/form';
 

@@ -99,6 +99,16 @@ class FeeStorageTest extends CommerceKernelTestBase {
       'name' => 'Fee 1',
       'order_types' => [$this->orderType],
       'stores' => [$this->store->id()],
+      'fee' => [
+        'target_plugin_id' => 'order_fixed_amount',
+        'target_plugin_configuration' => [
+          'amount' => [
+            'number' => '25.00',
+            'currency_code' => 'USD',
+          ],
+        ],
+      ],
+      'start_date' => '2019-11-15T10:14:00',
       'status' => TRUE,
     ]);
     $this->assertEquals(SAVED_NEW, $fee1->save());
@@ -109,6 +119,13 @@ class FeeStorageTest extends CommerceKernelTestBase {
       'name' => 'Fee 2',
       'order_types' => [$this->orderType],
       'stores' => [$this->store->id()],
+      'fee' => [
+        'target_plugin_id' => 'order_percentage',
+        'target_plugin_configuration' => [
+          'percentage' => '0.20',
+        ],
+      ],
+      'start_date' => '2019-01-01T00:00:00',
       'status' => FALSE,
     ]);
     $this->assertEquals(SAVED_NEW, $fee2->save());
@@ -117,8 +134,14 @@ class FeeStorageTest extends CommerceKernelTestBase {
       'name' => 'Fee 3',
       'order_types' => [$this->orderType],
       'stores' => [$this->store->id()],
+      'fee' => [
+        'target_plugin_id' => 'order_percentage',
+        'target_plugin_configuration' => [
+          'percentage' => '0.30',
+        ],
+      ],
+      'start_date' => '2014-01-01T00:00:00',
       'status' => TRUE,
-      'start_date' => '2014-01-01T20:00:00Z',
     ]);
     $this->assertEquals(SAVED_NEW, $fee3->save());
     // Start in 1 week, end in 1 year. Enabled.
@@ -127,8 +150,15 @@ class FeeStorageTest extends CommerceKernelTestBase {
       'order_types' => [$this->orderType],
       'stores' => [$this->store->id()],
       'status' => TRUE,
-      'start_date' => gmdate('Y-m-d', time() + 604800),
-      'end_date' => gmdate('Y-m-d', time() + 31536000),
+      'fee' => [
+        'target_plugin_id' => 'order_percentage',
+        'target_plugin_configuration' => [
+          'percentage' => '0.40',
+        ],
+      ],
+      'start_date' => '2019-01-01T00:00:00',
+      'end_date' => '2019-11-15T10:14:00',
+      'status' => TRUE,
     ]);
     $this->assertEquals(SAVED_NEW, $fee4->save());
 

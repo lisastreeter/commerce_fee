@@ -59,6 +59,8 @@ class FeeTest extends CommerceKernelTestBase {
   /**
    * @covers ::getName
    * @covers ::setName
+   * @covers ::getDisplayName
+   * @covers ::setDisplayName
    * @covers ::getDescription
    * @covers ::setDescription
    * @covers ::getOrderTypes
@@ -88,6 +90,9 @@ class FeeTest extends CommerceKernelTestBase {
 
     $fee->setName('My Fee');
     $this->assertEquals('My Fee', $fee->getName());
+
+    $fee->setDisplayName('50%');
+    $this->assertEquals('50%', $fee->getDisplayName());
 
     $fee->setDescription('My Fee Description');
     $this->assertEquals('My Fee Description', $fee->getDescription());

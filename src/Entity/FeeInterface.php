@@ -16,6 +16,8 @@ interface FeeInterface extends ContentEntityInterface, EntityStoresInterface {
   /**
    * Gets the fee name.
    *
+   * This name is admin-facing.
+   *
    * @return string
    *   The fee name.
    */
@@ -30,6 +32,27 @@ interface FeeInterface extends ContentEntityInterface, EntityStoresInterface {
    * @return $this
    */
   public function setName($name);
+
+  /**
+   * Gets the fee display name.
+   *
+   * This name is user-facing.
+   * Shown in the order total summary.
+   *
+   * @return string
+   *   The fee display name. If empty, use t('Fee').
+   */
+  public function getDisplayName();
+
+  /**
+   * Sets the fee display name.
+   *
+   * @param string $display_name
+   *   The fee display name.
+   *
+   * @return $this
+   */
+  public function setDisplayName($display_name);
 
   /**
    * Gets the fee description.

@@ -2,13 +2,9 @@ name: Commerce Fee
 type: module
 description: 'Provides a UI for managing fees.'
 package: Commerce
-# core: 8.x
+core_version_requirement: ^8.7.7 || ^9
 dependencies:
   - commerce:commerce
   - commerce:commerce_order
   - inline_entity_form:inline_entity_form
   - drupal:options
-
-version: '8.x-2.4'
-core: '8.x'
-project: 'commerce'

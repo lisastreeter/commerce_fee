@@ -51,12 +51,17 @@ use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
  *       "default" = "Drupal\entity\Routing\AdminHtmlRouteProvider",
  *       "delete-multiple" = "Drupal\entity\Routing\DeleteMultipleRouteProvider",
  *     },
- *     "translation" = "Drupal\content_translation\ContentTranslationHandler"
+ *     "translation" = "Drupal\commerce_fee\FeeTranslationHandler"
  *   },
  *   base_table = "commerce_fee",
  *   data_table = "commerce_fee_field_data",
  *   admin_permission = "administer commerce_fee",
  *   translatable = TRUE,
+ *   translation = {
+ *     "content_translation" = {
+ *       "access_callback" = "content_translation_translate_access"
+ *     },
+ *   },
  *   entity_keys = {
  *     "id" = "fee_id",
  *     "label" = "name",
@@ -71,10 +76,24 @@ use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
  *     "delete-form" = "/fee/{commerce_fee}/delete",
  *     "delete-multiple-form" = "/admin/commerce/fees/delete",
  *     "collection" = "/admin/commerce/fees",
+ *     "drupal:content-translation-overview" = "/fee/{commerce_fee}/translations",
+ *     "drupal:content-translation-add" = "/fee/{commerce_fee}/translations/add/{source}/{target}",
+ *     "drupal:content-translation-edit" = "/fee/{commerce_fee}/translations/edit/{language}",
+ *     "drupal:content-translation-delete" = "/fee/{commerce_fee}/translations/delete/{language}",
  *   },
  * )
  */
 class Fee extends CommerceContentEntityBase implements FeeInterface {
+
+  /**
+   * {@inheritdoc}
+   */
+  public function toUrl($rel = 'canonical', array $options = []) {
+    if ($rel == 'canonical') {
+      $rel = 'edit-form';
+    }
+    return parent::toUrl($rel, $options);
+  }
 
   /**
    * {@inheritdoc}
@@ -88,6 +107,21 @@ class Fee extends CommerceContentEntityBase implements FeeInterface {
    */
   public function setName($name) {
     $this->set('name', $name);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getDisplayName() {
+    return $this->get('display_name')->value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setDisplayName($display_name) {
+    $this->set('display_name', $display_name);
     return $this;
   }
 
@@ -372,6 +406,24 @@ class Fee extends CommerceContentEntityBase implements FeeInterface {
       ->setDisplayConfigurable('view', TRUE)
       ->setDisplayConfigurable('form', TRUE);
 
+    $fields['display_name'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Display name'))
+      ->setDescription(t('If provided, shown on the order instead of "@translated".', [
+        '@translated' => t('Fee'),
+      ]))
+      ->setTranslatable(TRUE)
+      ->setSettings([
+        'display_description' => TRUE,
+        'default_value' => '',
+        'max_length' => 255,
+      ])
+      ->setDisplayOptions('form', [
+        'type' => 'string_textfield',
+        'weight' => 0,
+      ])
+      ->setDisplayConfigurable('view', TRUE)
+      ->setDisplayConfigurable('form', TRUE);
+
     $fields['description'] = BaseFieldDefinition::create('string_long')
       ->setLabel(t('Description'))
       ->setDescription(t('Additional information about the fee to show to the customer'))
@@ -394,7 +446,6 @@ class Fee extends CommerceContentEntityBase implements FeeInterface {
       ->setRequired(TRUE)
       ->setSetting('target_type', 'commerce_order_type')
       ->setSetting('handler', 'default')
-      ->setTranslatable(TRUE)
       ->setDisplayOptions('form', [
         'type' => 'commerce_entity_select',
         'weight' => 2,
@@ -407,7 +458,6 @@ class Fee extends CommerceContentEntityBase implements FeeInterface {
       ->setRequired(TRUE)
       ->setSetting('target_type', 'commerce_store')
       ->setSetting('handler', 'default')
-      ->setTranslatable(TRUE)
       ->setDisplayOptions('form', [
         'type' => 'commerce_entity_select',
         'weight' => 2,
