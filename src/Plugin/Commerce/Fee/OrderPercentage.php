@@ -2,8 +2,8 @@
 
 namespace Drupal\commerce_fee\Plugin\Commerce\Fee;
 
-use Drupal\commerce_fee\Entity\FeeInterface;
 use Drupal\commerce_order\Adjustment;
+use Drupal\commerce_fee\Entity\FeeInterface;
 use Drupal\Core\Entity\EntityInterface;
 
 /**
@@ -38,8 +38,7 @@ class OrderPercentage extends OrderFeeBase {
       if (isset($amounts[$order_item->id()])) {
         $order_item->addAdjustment(new Adjustment([
           'type' => 'fee',
-          // @todo Change to label from UI when added in #2770731.
-          'label' => t('Fee'),
+          'label' => $promotion->getDisplayName() ?: $this->t('Fee'),
           'amount' => $amounts[$order_item->id()],
           'percentage' => $percentage,
           'source_id' => $fee->id(),

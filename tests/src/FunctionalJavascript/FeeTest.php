@@ -45,8 +45,10 @@ class FeeTest extends CommerceBrowserTestBase {
 
     // Check the integrity of the form.
     $this->assertSession()->fieldExists('name[0][value]');
+    $this->assertSession()->fieldExists('display_name[0][value]');
     $name = $this->randomMachineName(8);
     $this->getSession()->getPage()->fillField('name[0][value]', $name);
+    $this->getSession()->getPage()->fillField('display_name[0][value]', 'Fee');
     $this->getSession()->getPage()->selectFieldOption('plugin[0][target_plugin_id]', 'order_item_percentage');
     $this->waitForAjaxToFinish();
     $this->getSession()->getPage()->fillField('plugin[0][target_plugin_configuration][order_item_percentage][percentage]', '10.0');
@@ -74,7 +76,10 @@ class FeeTest extends CommerceBrowserTestBase {
     $fee_count = $this->getSession()->getPage()->find('xpath', '//table/tbody/tr/td[text()="' . $name . '"]');
     $this->assertEquals(count($fee_count), 1, 'fees exists in the table.');
 
+    /** @var \Drupal\commerce_fee\Entity\FeeInterface $fee */
     $fee = Fee::load(1);
+    $this->assertEquals($name, $fee->getName());
+    $this->assertEquals('Discount', $fee->getDisplayName());
     /** @var \Drupal\commerce\Plugin\Field\FieldType\PluginItem $plugin_field */
     $plugin_field = $fee->get('plugin')->first();
     $this->assertEquals('0.10', $plugin_field->target_plugin_configuration['percentage']);
@@ -116,6 +121,28 @@ class FeeTest extends CommerceBrowserTestBase {
     /** @var \Drupal\commerce\Plugin\Field\FieldType\PluginItem $plugin_field */
     $plugin_field = Fee::load(1)->get('plugin')->first();
     $this->assertEquals('0.10', $plugin_field->target_plugin_configuration['percentage']);
+  }
+
+  /**
+   * Tests updating the fee type when creating a promotion.
+   */
+  public function testCreateFeeTypeSelection() {
+    $this->drupalGet('admin/commerce/fees');
+    $this->clickLink('Add fee');
+
+    $fee_config_xpath = '//div[@data-drupal-selector="edit-fee-0-target-plugin-configuration"]';
+    $fee_config_container = $this->xpath($fee_config_xpath);
+    $this->assertEmpty($fee_config_container);
+
+    $this->getSession()->getPage()->selectFieldOption('fee[0][target_plugin_id]', 'order_item_percentage');
+    $this->assertSession()->assertWaitOnAjaxRequest();
+    $fee_config_container = $this->xpath($fee_config_xpath);
+    $this->assertNotEmpty($fee_config_container);
+
+    $this->getSession()->getPage()->selectFieldOption('fee[0][target_plugin_id]', '');
+    $this->assertSession()->assertWaitOnAjaxRequest();
+    $fee_config_container = $this->xpath($fee_config_xpath);
+    $this->assertEmpty($fee_config_container);
   }
 
   /**

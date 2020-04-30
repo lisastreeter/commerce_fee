@@ -26,9 +26,9 @@ class OrderItemFixedAmount extends OrderItemFeeBase {
     $this->assertEntity($entity);
     /** @var \Drupal\commerce_order\Entity\OrderItemInterface $order_item */
     $order_item = $entity;
-    $total_price = $order_item->getTotalPrice();
+    $adjusted_total_price = $order_item->getAdjustedTotalPrice(['fee']);
     $amount = $this->getAmount();
-    if ($total_price->getCurrencyCode() != $amount->getCurrencyCode()) {
+    if ($adjusted_total_price->getCurrencyCode() != $amount->getCurrencyCode()) {
       return;
     }
     $adjustment_amount = $amount->multiply($order_item->getQuantity());
@@ -36,8 +36,7 @@ class OrderItemFixedAmount extends OrderItemFeeBase {
 
     $order_item->addAdjustment(new Adjustment([
       'type' => 'fee',
-      // @todo Change to label from UI when added in #2770731.
-      'label' => t('Fee'),
+      'label' => $fee->getDisplayName() ?: $this->t('Fee'),
       'amount' => $adjustment_amount,
       'source_id' => $fee->id(),
     ]));

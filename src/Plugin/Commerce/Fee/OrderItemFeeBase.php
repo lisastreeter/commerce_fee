@@ -76,4 +76,11 @@ abstract class OrderItemFeeBase extends FeeBase implements OrderItemFeeInterface
     return $this;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getConditionOperator() {
+    return 'OR';
+  }
+
 }
